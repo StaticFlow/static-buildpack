@@ -24,19 +24,27 @@ echo "-----> Adding Nginx config"
 
 cat > $build_dir/.nginx.conf <<STUFF
 daemon off;
-error_log stderr;
-worker_processes 1;
+worker_processes auto;
 
 events {
     worker_connections 1024;
 }
 http {
+    server_tokens off;
+    
+    error_log stderr;
+    access_log /dev/stdout;
+    
     include /etc/nginx/mime.types;
     default_type application/octet-stream;
-    access_log /dev/stdout;
+    
+    types_hash_max_size 1024;
+    types_hash_bucket_size 64;
 
     server {
+        server_name localhost;
         listen 5000;
+        
         location / {
             root "/app/";
             autoindex on;
